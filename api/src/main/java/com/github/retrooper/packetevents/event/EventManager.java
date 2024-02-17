@@ -48,14 +48,7 @@ public class EventManager {
             Set<PacketListenerCommon> listeners = listenersMap.get(priority);
             if (listeners != null) {
                 for (PacketListenerCommon listener : listeners) {
-                    try {
-                        event.call(listener);
-                    } catch (Exception t) {
-                        // ignore handshake exceptions
-                        if (t.getClass() != InvalidHandshakeException.class) {
-                            PacketEvents.getAPI().getLogger().log(Level.WARNING, "PacketEvents caught an unhandled exception while calling your listener.", t);
-                        }
-                    }
+                    event.call(listener);
                     if (postCallListenerAction != null) {
                         postCallListenerAction.run();
                     }

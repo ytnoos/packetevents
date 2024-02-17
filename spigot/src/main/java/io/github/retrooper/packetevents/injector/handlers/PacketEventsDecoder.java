@@ -18,6 +18,7 @@
 
 package io.github.retrooper.packetevents.injector.handlers;
 
+import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.exception.PacketProcessException;
 import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
@@ -33,11 +34,14 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.logging.Level;
 
 public class PacketEventsDecoder extends MessageToMessageDecoder<ByteBuf> {
     public User user;
     public Player player;
     public boolean hasBeenRelocated;
+    private int catches = 0;
+    private boolean sent;
 
     public PacketEventsDecoder(User user) {
         this.user = user;
@@ -50,8 +54,19 @@ public class PacketEventsDecoder extends MessageToMessageDecoder<ByteBuf> {
     }
 
     public void read(ChannelHandlerContext ctx, ByteBuf input, List<Object> out) throws Exception {
-        Object buffer = PacketEventsImplHelper.handleServerBoundPacket(ctx.channel(), user, player, input, true);
-        out.add(ByteBufHelper.retain(buffer));
+        try {
+            Object buffer = PacketEventsImplHelper.handleServerBoundPacket(ctx.channel(), user, player, input, true);
+            out.add(ByteBufHelper.retain(buffer));
+        } catch (Throwable e) {
+            catches++;
+
+            if(catches < 10) {
+                PacketEvents.getAPI().getLogger().log(Level.WARNING, "An error occurred while reading a packet.", e);
+            } else if(!sent) {
+                sent = true;
+                PacketEvents.getAPI().getLogger().log(Level.WARNING, () -> player.getName() + " caused a lot of errors while reading packets. This is the last warning.");
+            }
+        }
     }
 
     @Override
