@@ -37,6 +37,8 @@ import java.util.List;
 public class PacketEventsDecoder extends MessageToMessageDecoder<ByteBuf> {
     public User user;
     public ProxiedPlayer player;
+    int catches = 0;
+    boolean sent = false;
 
     public PacketEventsDecoder(User user) {
         this.user = user;
@@ -55,8 +57,7 @@ public class PacketEventsDecoder extends MessageToMessageDecoder<ByteBuf> {
                     ByteBufHelper.clear(packetReceiveEvent.getByteBuf());
                     packetReceiveEvent.getLastUsedWrapper().writeVarInt(packetReceiveEvent.getPacketId());
                     packetReceiveEvent.getLastUsedWrapper().write();
-                }
-                else {
+                } else {
                     transformed.readerIndex(firstReaderIndex);
                 }
                 output.add(transformed.retain());
@@ -65,6 +66,15 @@ public class PacketEventsDecoder extends MessageToMessageDecoder<ByteBuf> {
                 for (Runnable task : packetReceiveEvent.getPostTasks()) {
                     task.run();
                 }
+            }
+        } catch (Throwable e) {
+            catches++;
+
+            if (catches < 10) {
+                e.printStackTrace();
+            } else if (!sent) {
+                System.out.println("Too many exceptions caught in PacketEventsDecoder from " + player.getName() + ", stopping stacktrace printing.");
+                sent = true;
             }
         } finally {
             transformed.release();
