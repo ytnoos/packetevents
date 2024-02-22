@@ -1014,6 +1014,15 @@ public class PacketWrapper<T extends PacketWrapper> {
         writeOptional(legacyUpdate.getLastReceived(), PacketWrapper::writeLastMessagesEntry);
     }
 
+    public MessageSignature readMessageSignature() {
+        if(serverVersion.isNewerThanOrEquals(ServerVersion.V_1_19_3)) return new MessageSignature(readBytes(256));
+        else return new MessageSignature(readByteArray());
+    }
+
+    public void writeMessageSignature(MessageSignature messageSignature) {
+        writeBytes(messageSignature.getBytes());
+    }
+
     public MessageSignature.Packed readMessageSignaturePacked() {
         int id = readVarInt() - 1;
         if (id == -1) {
@@ -1049,13 +1058,13 @@ public class PacketWrapper<T extends PacketWrapper> {
     }
 
     public List<SignedCommandArgument> readSignedCommandArguments() {
-        return readCollection(ArrayList::new, (_packet) -> new SignedCommandArgument(readString(), readByteArray()));
+        return readCollection(limitValue(ArrayList::new, 8), (_packet) -> new SignedCommandArgument(readString(16), readMessageSignature()));
     }
 
     public void writeSignedCommandArguments(List<SignedCommandArgument> signedArguments) {
         writeCollection(signedArguments, (_packet, argument) -> {
-            writeString(argument.getArgument());
-            writeByteArray(argument.getSignature());
+            writeString(argument.getArgument(), 16);
+            writeMessageSignature(argument.getSignature());
         });
     }
 
