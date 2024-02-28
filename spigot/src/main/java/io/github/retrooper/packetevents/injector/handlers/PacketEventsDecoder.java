@@ -44,8 +44,6 @@ public class PacketEventsDecoder extends MessageToMessageDecoder<ByteBuf> {
     public User user;
     public Player player;
     public boolean hasBeenRelocated;
-    private int catches = 0;
-    private boolean sent;
 
     public PacketEventsDecoder(User user) {
         this.user = user;
