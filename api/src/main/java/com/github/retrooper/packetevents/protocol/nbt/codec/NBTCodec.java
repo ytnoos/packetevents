@@ -38,6 +38,7 @@ import java.util.zip.GZIPOutputStream;
 
 public class NBTCodec {
     //PacketEvents start: JSON -> NBT conversion method
+    @Deprecated
     public static NBT jsonToNBT(JsonElement element) {
         //Deal with the primitives first
         if (element instanceof JsonPrimitive) {
@@ -101,6 +102,7 @@ public class NBTCodec {
     //PacketEvents end
 
     //PacketEvents start - NBT to JSON conversion
+    @Deprecated
     public static JsonElement nbtToJson(NBT nbt, boolean parseByteAsBool) {
         //TODO once I make my own nbt implementation, make a toJSON method that each nbt class implements to make this  a one liner
         if (nbt instanceof NBTNumber) {

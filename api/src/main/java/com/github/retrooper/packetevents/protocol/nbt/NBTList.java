@@ -133,4 +133,9 @@ public class NBTList<T extends NBT> extends NBT {
         }
         return new NBTList<>(type, newTags);
     }
+
+    @Override
+    public String toString() {
+        return "List(" + tags + ")";
+    }
 }

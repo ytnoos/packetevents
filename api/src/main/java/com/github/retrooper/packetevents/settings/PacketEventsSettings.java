@@ -212,7 +212,6 @@ public class PacketEventsSettings {
         return kickOnPacketExceptionEnabled;
     }
 
-
     /**
      * As described above, this method retrieves the function that acquires the InputStream
      * of a desired resource by its path.
