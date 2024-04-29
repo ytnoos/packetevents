@@ -115,8 +115,10 @@ public class SpigotChannelInjector implements ChannelInjector {
                     try {
                         ServerConnectionInitializer.initChannel(channel, ConnectionState.PLAY);
                     } catch (Exception e) {
-                        PacketEvents.getAPI().getLogManager().severe("Spigot injector failed to inject into an existing channel.");
-                        e.printStackTrace();
+                        if(!PacketEvents.getAPI().getSettings().shouldIgnoreFailures()) {
+                            PacketEvents.getAPI().getLogManager().severe("Spigot injector failed to inject into an existing channel.");
+                            e.printStackTrace();
+                        }
                     }
                 }
             }

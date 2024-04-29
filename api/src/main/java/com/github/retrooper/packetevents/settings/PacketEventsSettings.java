@@ -39,6 +39,7 @@ public class PacketEventsSettings {
     private boolean debugEnabled = false;
     private boolean fullStackTraceEnabled = false;
     private boolean kickOnPacketExceptionEnabled = true;
+    private boolean ignoreFailures = false;
     private Function<String, InputStream> resourceProvider = path -> PacketEventsSettings.class
             .getClassLoader()
             .getResourceAsStream(path);
@@ -138,6 +139,17 @@ public class PacketEventsSettings {
     }
 
     /**
+     * This decides if PacketEvents should ignore injection failures.
+     *
+     * @param ignoreFailures Value
+     * @return Settings instance.
+     */
+    public PacketEventsSettings ignoreFailures(boolean ignoreFailures) {
+        this.ignoreFailures = ignoreFailures;
+        return this;
+    }
+
+    /**
      * Some projects may want to implement a CDN with resources like asset mappings
      * By default, all resources are retrieved from the ClassLoader
      *
@@ -175,6 +187,14 @@ public class PacketEventsSettings {
         return downsampleColors;
     }
 
+    /**
+     * Should we ignore injection failures?
+     *
+     * @return Getter for {@link #ignoreFailures}
+     */
+    public boolean shouldIgnoreFailures() {
+        return ignoreFailures;
+    }
 
     /**
      * Should we collect server data anonymously and report to bStats?
