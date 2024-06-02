@@ -20,6 +20,6 @@ public class NBTLimiter {
     }
 
     public void checkReadability(int length) {
-        if(length > ByteBufHelper.readableBytes(byteBuf)) throw new IllegalArgumentException("Length is too large: " + length + ", readable: " + ByteBufHelper.readableBytes(byteBuf));
+        if(byteBuf != null && length > ByteBufHelper.readableBytes(byteBuf)) throw new IllegalArgumentException("Length is too large: " + length + ", readable: " + ByteBufHelper.readableBytes(byteBuf));
     }
 }
